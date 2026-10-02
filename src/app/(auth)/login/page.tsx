@@ -1,21 +1,40 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { Eye, EyeOff, Loader2, LogIn, AlertCircle, CheckCircle2, KeyRound, UserCheck, ShieldCheck } from 'lucide-react'
+import { Eye, EyeOff, Loader2, LogIn, AlertCircle, CheckCircle2, KeyRound, UserCheck, ShieldCheck, Info } from 'lucide-react'
 import ChangePasswordModal from '@/components/auth/ChangePasswordModal'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('admin')
+  const [email, setEmail] = useState('pfc')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    const errParam = params.get('error')
+    if (errParam) {
+      if (errParam === 'auth_callback_failed') {
+        setError('The password reset link was either expired, already used, or invalid. You can log in using the admin credentials below, or click "Change Password" directly.')
+      } else {
+        setError(decodeURIComponent(errParam))
+      }
+    }
+
+    const hash = window.location.hash
+    if (hash && hash.includes('type=recovery')) {
+      setIsChangeModalOpen(true)
+      setSuccessMessage('Password recovery session verified! Please enter your new password.')
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
