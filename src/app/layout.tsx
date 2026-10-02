@@ -9,15 +9,15 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: {
-    default: 'ReviewPulse — Restaurant Feedback & Authentic Reviews',
-    template: '%s | ReviewPulse',
+    default: 'PFC - Patna Fried Chicken | Feedback & Reviews',
+    template: '%s | PFC Patna Fried Chicken',
   },
-  description: 'QR-based customer feedback platform for PM Zaika Restaurant with AI-assisted review drafting',
-  applicationName: 'PM Zaika Feedback',
+  description: 'Instant QR customer feedback, smart AI reviews & live restaurant management dashboard for PFC - Patna Fried Chicken, Ashiyana Digha Road, Patna',
+  applicationName: 'PFC Feedback',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'PM Zaika',
+    title: 'PFC Patna',
   },
   formatDetection: {
     telephone: false,
@@ -57,6 +57,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="ReviewPulse" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+        {/* Development: Force-unregister lingering service workers & clear stale dev caches */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof window !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+                if ('serviceWorker' in navigator) {
+                  navigator.serviceWorker.getRegistrations().then(function(regs) {
+                    for (var i = 0; i < regs.length; i++) { regs[i].unregister(); }
+                  });
+                }
+                if ('caches' in window) {
+                  caches.keys().then(function(keys) {
+                    keys.forEach(function(k) { caches.delete(k); });
+                  });
+                }
+              }
+            `,
+          }}
+        />
       </head>
       <body className={`${inter.className} min-h-screen min-h-[100dvh] bg-slate-950 text-slate-100 antialiased overflow-x-hidden selection:bg-amber-500 selection:text-white`}>
         <PwaProvider>

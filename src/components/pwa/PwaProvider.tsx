@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
+import React, { createContext, useContext, useEffect, useState, useCallback, useSyncExternalStore } from 'react'
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[]
@@ -26,58 +26,87 @@ const PwaContext = createContext<PwaContextValue | null>(null)
 
 const DISMISS_KEY = 'rp_pwa_prompt_dismissed_until'
 
+function subscribeOnline(callback: () => void) {
+  window.addEventListener('online', callback)
+  window.addEventListener('offline', callback)
+  return () => {
+    window.removeEventListener('online', callback)
+    window.removeEventListener('offline', callback)
+  }
+}
+
+function getOnlineSnapshot() {
+  return typeof navigator !== 'undefined' ? navigator.onLine : true
+}
+
+function getServerOnlineSnapshot() {
+  return true
+}
+
 export function PwaProvider({ children }: { children: React.ReactNode }) {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [isInstallable, setIsInstallable] = useState(false)
   const [isInstalled, setIsInstalled] = useState(false)
   const [isIOS, setIsIOS] = useState(false)
-  const [isOnline, setIsOnline] = useState(true)
+  const isOnline = useSyncExternalStore(subscribeOnline, getOnlineSnapshot, getServerOnlineSnapshot)
   const [showInstallModal, setShowInstallModal] = useState(false)
 
   // 1. Register Service Worker & check standalone mode
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    // Set online status
-    setIsOnline(navigator.onLine)
-    const handleOnline = () => setIsOnline(true)
-    const handleOffline = () => setIsOnline(false)
-    window.addEventListener('online', handleOnline)
-    window.addEventListener('offline', handleOffline)
-
     // Detect iOS
     const userAgent = window.navigator.userAgent.toLowerCase()
-    const isIosDevice = /iphone|ipad|ipod/.test(userAgent) && !(window as any).MSStream
+    const isIosDevice = /iphone|ipad|ipod/.test(userAgent) && !('MSStream' in window)
     setIsIOS(isIosDevice)
 
     // Check if running in standalone display mode (installed)
+    const nav = window.navigator as unknown as { standalone?: boolean }
     const isStandalone =
       window.matchMedia('(display-mode: standalone)').matches ||
-      (window.navigator as any).standalone === true ||
+      nav.standalone === true ||
       document.referrer.includes('android-app://')
 
     setIsInstalled(isStandalone)
 
-    // Register service worker if supported
+    // Register service worker if supported (production only)
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/sw.js', { scope: '/' })
-        .then((reg) => {
-          // Check for updates
-          reg.addEventListener('updatefound', () => {
-            const installingWorker = reg.installing
-            if (installingWorker) {
-              installingWorker.addEventListener('statechange', () => {
-                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  console.log('[PWA] New content is available; please refresh.')
-                }
-              })
-            }
+      if (process.env.NODE_ENV === 'production') {
+        navigator.serviceWorker
+          .register('/sw.js', { scope: '/' })
+          .then((reg) => {
+            // Check for updates
+            reg.addEventListener('updatefound', () => {
+              const installingWorker = reg.installing
+              if (installingWorker) {
+                installingWorker.addEventListener('statechange', () => {
+                  if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    console.log('[PWA] New content is available; please refresh.')
+                  }
+                })
+              }
+            })
           })
+          .catch((err) => {
+            console.warn('[PWA] Service Worker registration failed:', err)
+          })
+      } else {
+        // In development, unregister any active service workers & purge caches to avoid Turbopack chunk mismatch errors
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          for (const reg of registrations) {
+            reg.unregister()
+          }
         })
-        .catch((err) => {
-          console.warn('[PWA] Service Worker registration failed:', err)
-        })
+        if ('caches' in window) {
+          caches.keys().then((keys) => {
+            keys.forEach((key) => {
+              if (key.startsWith('rp-')) {
+                caches.delete(key)
+              }
+            })
+          })
+        }
+      }
     }
 
     // Capture Android/Desktop beforeinstallprompt event
@@ -122,8 +151,6 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
     }
 
     return () => {
-      window.removeEventListener('online', handleOnline)
-      window.removeEventListener('offline', handleOffline)
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
       window.removeEventListener('appinstalled', handleAppInstalled)
     }

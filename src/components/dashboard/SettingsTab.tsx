@@ -18,6 +18,7 @@ import {
   Sparkles,
   Sliders,
   Phone,
+  Utensils,
 } from 'lucide-react'
 
 export interface BusinessSettings {
@@ -29,6 +30,7 @@ export interface BusinessSettings {
   googleReviewUrl: string | null
   welcomeMessage: any
   primaryColor: string | null
+  logoUrl?: string | null
 }
 
 interface SettingsTabProps {
@@ -48,8 +50,9 @@ export default function SettingsTab({
   // Restaurant Profile state
   const [name, setName] = useState(business.name)
   const [location, setLocation] = useState(business.location || '')
-  const [phone, setPhone] = useState(business.phone || '7488260572')
-  const [secondaryPhone, setSecondaryPhone] = useState(business.secondaryPhone || '06123112128, 9525748843')
+  const [phone, setPhone] = useState(business.phone || '7091719475')
+  const [secondaryPhone, setSecondaryPhone] = useState(business.secondaryPhone || '')
+  const [logoUrl, setLogoUrl] = useState(business.logoUrl || '/pfc-logo.jpg')
   const [googleUrl, setGoogleUrl] = useState(business.googleReviewUrl || '')
   const [welcomeText, setWelcomeText] = useState(
     (typeof business.welcomeMessage === 'object' && business.welcomeMessage?.en) ||
@@ -106,6 +109,7 @@ export default function SettingsTab({
           location: location.trim() || undefined,
           phone: phone.trim() || undefined,
           secondary_phone: secondaryPhone.trim() || undefined,
+          logo_url: logoUrl.trim() || null,
           google_review_url: googleUrl.trim() || null,
           welcome_message: { en: welcomeText.trim() },
           primary_color: primaryColor || null,
@@ -263,6 +267,35 @@ export default function SettingsTab({
                 />
               </div>
 
+              {/* Logo URL with Live Visual Preview */}
+              <div className="space-y-1.5">
+                <Label htmlFor="sLogo" className="text-xs font-medium text-slate-300">
+                  Brand Logo URL or Path
+                </Label>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-slate-950 border border-slate-800 overflow-hidden shrink-0 flex items-center justify-center shadow-xs">
+                    {logoUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={logoUrl} alt="Logo Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <Utensils className="w-5 h-5 text-slate-500" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <Input
+                      id="sLogo"
+                      value={logoUrl}
+                      onChange={(e) => setLogoUrl(e.target.value)}
+                      placeholder="/pfc-logo.jpg or https://example.com/logo.png"
+                      className="bg-slate-950/60 border-slate-800 text-white h-10 text-xs rounded-xl"
+                    />
+                    <p className="text-[10px] text-slate-500 mt-1">
+                      Local asset path (e.g. <code className="text-slate-400">/pfc-logo.jpg</code>) or hosted HTTPS image URL
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <div className="space-y-1.5">
                 <Label htmlFor="sLoc" className="text-xs font-medium text-slate-300">
                   Location / Full Address
@@ -271,7 +304,7 @@ export default function SettingsTab({
                   id="sLoc"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Shershah Road, Gur ki Mandi, Gulzarbagh, Patna"
+                  placeholder="Shop No. 4, Divya Apartment, Near Gold's Gym, Ashiyana Digha Road, Patna"
                   className="bg-slate-950/60 border-slate-800 text-white h-10 text-xs rounded-xl"
                 />
               </div>
@@ -291,7 +324,7 @@ export default function SettingsTab({
                     id="sPhone"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="7488260572"
+                    placeholder="7091719475"
                     className="bg-slate-950/60 border-slate-800 text-white h-10 text-xs rounded-xl"
                   />
                   <p className="text-[10px] text-slate-400">
@@ -397,8 +430,8 @@ export default function SettingsTab({
                 <p className="text-[11px] text-slate-400 mt-0.5">
                   Aliases supported for login: <strong className="text-slate-300">admin</strong>,{' '}
                   <strong className="text-slate-300">owner</strong>,{' '}
-                  <strong className="text-slate-300">zaika</strong>,{' '}
-                  <strong className="text-slate-300">pmzaika</strong>
+                  <strong className="text-slate-300">pfc</strong>,{' '}
+                  <strong className="text-slate-300">patnafriedchicken</strong>
                 </p>
               </div>
             </div>

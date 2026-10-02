@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
         headers: {
           'Content-Type': 'image/svg+xml',
           ...(isDownload
-            ? { 'Content-Disposition': `attachment; filename="reviewpulse-qr-${slug}.svg"` }
+            ? { 'Content-Disposition': `attachment; filename="pfc-qr-${slug}.svg"` }
             : {}),
         },
       })
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
         'Content-Type': 'image/png',
         'Cache-Control': 'public, max-age=31536000, immutable',
         ...(isDownload
-          ? { 'Content-Disposition': `attachment; filename="reviewpulse-qr-${slug}.png"` }
+          ? { 'Content-Disposition': `attachment; filename="pfc-qr-${slug}.png"` }
           : {}),
       },
     })

@@ -19,7 +19,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // 3. Supabase auth session refresh for dashboard routes
-  let response = NextResponse.next({ request: { headers: request.headers } })
+  const response = NextResponse.next({ request: { headers: request.headers } })
 
   if (pathname.startsWith('/dashboard') || pathname.startsWith('/api/dashboard')) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL

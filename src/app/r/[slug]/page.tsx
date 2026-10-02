@@ -20,7 +20,7 @@ export default async function PublicQuizPage({ params, searchParams }: PublicQui
     .eq('slug', slug)
     .maybeSingle()
 
-  // Graceful fallback: If this slug was deleted or user enters custom slug, resolve to the active PM Zaika Restaurant campaign
+  // Graceful fallback: If this slug was deleted or user enters custom slug, resolve to the active PFC Patna Fried Chicken campaign
   if (!campaign) {
     const { data: fallbackCampaign } = await supabase
       .from('campaigns')
@@ -44,14 +44,14 @@ export default async function PublicQuizPage({ params, searchParams }: PublicQui
           </div>
           <h1 className="text-xl font-bold text-stone-900">QR Code Not Found</h1>
           <p className="text-sm text-stone-500">
-            This QR code is not valid or has been removed. Please ask your server at PM Zaika Restaurant for assistance.
+            This QR code is not valid or has been removed. Please ask your server at PFC - Patna Fried Chicken for assistance.
           </p>
           <div className="pt-2">
             <a
-              href="tel:7488260572"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-900 hover:bg-amber-100 transition-colors"
+              href="tel:7091719475"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-900 hover:bg-rose-100 transition-colors"
             >
-              📞 Call: +91 7488260572
+              📞 Call: +91 7091719475
             </a>
           </div>
         </div>
@@ -69,14 +69,14 @@ export default async function PublicQuizPage({ params, searchParams }: PublicQui
           </div>
           <h1 className="text-xl font-bold text-stone-900">Survey Temporarily Inactive</h1>
           <p className="text-sm text-stone-500">
-            This feedback code is currently paused by PM Zaika Restaurant. Please check with your server.
+            This feedback code is currently paused by PFC - Patna Fried Chicken. Please check with your server.
           </p>
           <div className="pt-2">
             <a
-              href="tel:7488260572"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-900 hover:bg-amber-100 transition-colors"
+              href="tel:7091719475"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-900 hover:bg-rose-100 transition-colors"
             >
-              📞 Call: +91 7488260572
+              📞 Call: +91 7091719475
             </a>
           </div>
         </div>
@@ -150,22 +150,22 @@ export default async function PublicQuizPage({ params, searchParams }: PublicQui
     }
   }
 
-  const restaurantName = business?.name ?? 'PM Zaika Restaurant'
+  const restaurantName = business?.name ?? 'Patna Fried Chicken (PFC)'
   const welcomeText =
     (business?.welcome_message?.en as string | undefined) ??
-    'Welcome to PM Zaika Restaurant! Share your honest dining experience with us in 30 seconds. For direct helpline & orders call 7488260572.'
+    'Welcome to Patna Fried Chicken (PFC)! Share your crispy dining experience with us in 30 seconds. For direct helpline & orders call 7091719475.'
 
   return (
-    <div className="min-h-screen min-h-[100dvh] min-h-safe-screen bg-[#faf8f5] bg-gradient-to-b from-[#fdfbf7] via-[#fbf7ee] to-[#f6efe0] text-stone-900 flex flex-col justify-between px-3 sm:px-6 pt-safe pb-safe py-3 sm:py-6 selection:bg-amber-600 selection:text-white relative overflow-x-hidden font-sans">
+    <div className="min-h-screen min-h-[100dvh] min-h-safe-screen bg-[#faf8f5] bg-gradient-to-b from-[#fdfbf7] via-[#fbf7ee] to-[#f6efe0] text-stone-900 flex flex-col justify-between px-3 sm:px-6 pt-safe pb-safe py-3 sm:py-6 selection:bg-rose-600 selection:text-white relative overflow-x-hidden font-sans">
       {/* Ambient warm gold & saffron glows */}
-      <div className="fixed -top-12 left-1/2 -translate-x-1/2 w-80 h-80 bg-amber-300/25 rounded-full blur-3xl pointer-events-none" />
-      <div className="fixed bottom-0 right-1/4 w-80 h-80 bg-yellow-300/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed -top-12 left-1/2 -translate-x-1/2 w-80 h-80 bg-rose-400/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed bottom-0 right-1/4 w-80 h-80 bg-amber-400/20 rounded-full blur-3xl pointer-events-none" />
 
       {/* Header Badge */}
       <header className="relative z-10 flex items-center justify-center pt-1 sm:pt-2">
         <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-white/95 border border-stone-200/90 shadow-xs backdrop-blur-md">
-          <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-amber-600 shrink-0" />
-          <span className="text-[10px] sm:text-[11px] font-bold text-amber-950 tracking-wide">
+          <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-rose-600 shrink-0" />
+          <span className="text-[10px] sm:text-[11px] font-bold text-stone-900 tracking-wide">
             {restaurantName} • Guest Feedback
           </span>
         </div>
@@ -192,13 +192,13 @@ export default async function PublicQuizPage({ params, searchParams }: PublicQui
           <span>Powered by</span>
           <span className="font-bold text-stone-700">ReviewPulse</span>
           <span>•</span>
-          <span className="font-semibold text-stone-800">{restaurantName}, Patna</span>
+          <span className="font-semibold text-stone-800">{restaurantName}, Ashiyana Digha Rd, Patna</span>
         </div>
-        <div className="flex items-center gap-1 text-amber-800 font-medium">
+        <div className="flex items-center gap-1 text-rose-800 font-medium">
           <span>•</span>
-          <a href="tel:7488260572" className="hover:underline flex items-center gap-1">
+          <a href="tel:7091719475" className="hover:underline flex items-center gap-1">
             <span>Helpline:</span>
-            <strong>+91 7488260572</strong>
+            <strong>+91 7091719475</strong>
           </a>
         </div>
       </footer>

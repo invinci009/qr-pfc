@@ -62,8 +62,9 @@ export default function CampaignsTab({ campaigns, onRefresh }: CampaignsTabProps
   }
 
   const handleDeleteCampaign = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete campaign "${name}"?`)) return
+    if (typeof window !== 'undefined' && !window.confirm(`Are you sure you want to delete campaign "${name}"?`)) return
     setDeletingId(id)
+    setError(null)
     try {
       const res = await fetch(`/api/business/campaigns?id=${id}`, {
         method: 'DELETE',
@@ -72,11 +73,11 @@ export default function CampaignsTab({ campaigns, onRefresh }: CampaignsTabProps
         onRefresh()
       } else {
         const data = await res.json()
-        alert(data.error || 'Failed to delete campaign')
+        setError(data.error || 'Failed to delete campaign')
       }
     } catch (e) {
       console.error('Delete campaign error:', e)
-      alert('Network error while deleting campaign')
+      setError('Network error while deleting campaign')
     } finally {
       setDeletingId(null)
     }
@@ -123,7 +124,7 @@ export default function CampaignsTab({ campaigns, onRefresh }: CampaignsTabProps
             </span>
           </div>
           <p className="text-xs text-slate-400 mt-1">
-            Generate and manage tabletop QR codes, bill inserts, and counter stands for PM Zaika Restaurant
+            Generate and manage tabletop QR codes, bill inserts, and counter stands for Patna Fried Chicken (PFC)
           </p>
         </div>
 
@@ -135,6 +136,20 @@ export default function CampaignsTab({ campaigns, onRefresh }: CampaignsTabProps
           <span>New QR Campaign</span>
         </Button>
       </div>
+
+      {/* Top Error Alert (for actions like delete/toggle) */}
+      {error && !isModalOpen && (
+        <div className="p-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-center justify-between gap-2">
+          <span>{error}</span>
+          <button
+            type="button"
+            onClick={() => setError(null)}
+            className="text-rose-400 hover:text-white text-xs font-bold px-2 py-0.5"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Campaigns Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -264,7 +279,7 @@ export default function CampaignsTab({ campaigns, onRefresh }: CampaignsTabProps
             <QrCode className="w-10 h-10 mx-auto text-slate-600" />
             <div className="space-y-1">
               <p className="text-base font-bold text-white">No QR Campaigns Found</p>
-              <p className="text-xs text-slate-400">Click &ldquo;New QR Campaign&rdquo; above to generate a QR code for PM Zaika Restaurant.</p>
+              <p className="text-xs text-slate-400">Click &ldquo;New QR Campaign&rdquo; above to generate a QR code for Patna Fried Chicken (PFC).</p>
             </div>
           </div>
         )}

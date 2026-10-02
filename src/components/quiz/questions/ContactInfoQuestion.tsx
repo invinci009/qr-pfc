@@ -12,13 +12,13 @@ export interface ContactInfoValue {
 interface ContactInfoQuestionProps {
   value: ContactInfoValue
   onChange: (value: ContactInfoValue) => void
-  restaurantName: string
+  restaurantName?: string
 }
 
 export default function ContactInfoQuestion({
   value,
   onChange,
-  restaurantName,
+  restaurantName = 'PFC',
 }: ContactInfoQuestionProps) {
   const [name, setName] = useState(value.name || '')
   const [phone, setPhone] = useState(value.phone || '')
@@ -181,7 +181,7 @@ export default function ContactInfoQuestion({
               Receive updates on WhatsApp
             </span>
             <span className="text-[11px] text-stone-500 block">
-              Get notified about special dining offers, new Zaika menu items &amp; festive discounts. Unsubscribe anytime.
+              Get notified about special {restaurantName} chicken offers, combo deals, discounts &amp; new menu items. Unsubscribe anytime.
             </span>
           </div>
         </label>

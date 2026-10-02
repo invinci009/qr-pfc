@@ -11,12 +11,12 @@ import { Utensils, ArrowRight, Loader2, Sparkles, ShieldCheck, CheckCircle2 } fr
 export default function OnboardingWizard() {
   const router = useRouter()
   const [step, setStep] = useState(1)
-  const [name, setName] = useState('PM Zaika Restaurant')
-  const [location, setLocation] = useState('Shershah Road, Gur ki Mandi, Infront of Bank of India, PO - Gulzarbagh , Patna - 800007')
-  const [phone, setPhone] = useState('7488260572')
+  const [name, setName] = useState('Patna Fried Chicken (PFC)')
+  const [location, setLocation] = useState('Shop No. 4, Divya Apartment, Near Gold\'s Gym, Ashiyana Digha Road, Patna')
+  const [phone, setPhone] = useState('7091719475')
   const [googleReviewUrl, setGoogleReviewUrl] = useState('')
   const [welcomeMessage, setWelcomeMessage] = useState(
-    'Welcome to PM Zaika Restaurant! Share your honest dining experience with us in 30 seconds. For helpline & orders call 7488260572.'
+    'Welcome to Patna Fried Chicken (PFC)! Share your crispy dining experience with us in 30 seconds. For helpline & orders call 7091719475.'
   )
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)

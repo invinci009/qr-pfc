@@ -1,5 +1,5 @@
 // ReviewPulse PWA Service Worker
-const CACHE_VERSION = 'rp-v2'
+const CACHE_VERSION = 'rp-v3'
 const STATIC_CACHE = `rp-static-${CACHE_VERSION}`
 const DYNAMIC_CACHE = `rp-dynamic-${CACHE_VERSION}`
 
@@ -17,6 +17,12 @@ const PRECACHE_ASSETS = [
 
 // Install Event: Pre-cache static shell & offline fallback
 self.addEventListener('install', (event) => {
+  // If running on localhost/dev, do not install/cache
+  if (self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1') {
+    self.skipWaiting()
+    return
+  }
+
   event.waitUntil(
     caches
       .open(STATIC_CACHE)
@@ -36,6 +42,12 @@ self.addEventListener('activate', (event) => {
     caches
       .keys()
       .then((keys) => {
+        // If on localhost, wipe ALL caches and unregister
+        if (self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1') {
+          return Promise.all(keys.map((key) => caches.delete(key))).then(() =>
+            self.registration.unregister()
+          )
+        }
         return Promise.all(
           keys
             .filter((key) => key !== STATIC_CACHE && key !== DYNAMIC_CACHE)
@@ -50,8 +62,13 @@ self.addEventListener('activate', (event) => {
 // CRITICAL RULES FOR HIGH PERFORMANCE:
 // 1. Never intercept non-GET requests (POST, PUT, PATCH, DELETE must go straight to network)
 // 2. Never intercept cross-origin requests (Supabase, Google Reviews, analytics)
-// 3. Never intercept API or Auth routes (/api/*, /auth/*)
+// 3. Never intercept API, Auth, or Next.js internal/static compilation chunks
 self.addEventListener('fetch', (event) => {
+  // Never intercept anything on localhost/development
+  if (self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1') {
+    return
+  }
+
   const { request } = event
 
   // Only handle GET requests
@@ -66,11 +83,12 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Bypass API, auth, and telemetry routes completely
+  // Bypass API, auth, and Next.js internal chunks completely
   if (
     url.pathname.startsWith('/api/') ||
     url.pathname.startsWith('/auth/') ||
-    url.pathname.startsWith('/_next/webpack-hmr')
+    url.pathname.startsWith('/_next/') ||
+    url.pathname.includes('turbopack')
   ) {
     return
   }
@@ -108,9 +126,8 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Handle Static Assets (_next/static, /icons/, images, fonts)
+  // Handle Static Assets (/icons/, images, fonts) — NOT /_next/ (Next.js handles its own caching)
   if (
-    url.pathname.startsWith('/_next/static/') ||
     url.pathname.startsWith('/icons/') ||
     url.pathname.endsWith('.png') ||
     url.pathname.endsWith('.svg') ||

@@ -3,6 +3,9 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { businessCreateSchema } from '@/lib/validation/schemas'
 import { generateRandomSlug } from '@/lib/utils/slug'
+import type { Database } from '@/lib/supabase/types'
+
+type BusinessUpdate = Database['public']['Tables']['businesses']['Update']
 
 export async function POST(request: NextRequest) {
   try {
@@ -48,26 +51,29 @@ export async function POST(request: NextRequest) {
     let businessId: string
 
     if (existing) {
-      // Update existing
+      // Update existing without wiping unset fields
+      const updateData: BusinessUpdate = {
+        name: data.name,
+        updated_at: new Date().toISOString(),
+      }
+      if (data.location !== undefined) updateData.location = data.location || null
+      if (data.phone !== undefined) updateData.phone = data.phone || null
+      if (data.secondary_phone !== undefined) updateData.secondary_phone = data.secondary_phone || null
+      if (data.timezone !== undefined) updateData.timezone = data.timezone
+      if (data.logo_url !== undefined) updateData.logo_url = data.logo_url || null
+      if (data.primary_color !== undefined) updateData.primary_color = data.primary_color || null
+      if (data.welcome_message !== undefined) updateData.welcome_message = data.welcome_message
+      if (data.google_review_url !== undefined) updateData.google_review_url = data.google_review_url || null
+
       const { data: updated, error: updateError } = await admin
         .from('businesses')
-        .update({
-          name: data.name,
-          location: data.location || null,
-          phone: data.phone || null,
-          secondary_phone: data.secondary_phone || null,
-          timezone: data.timezone,
-          logo_url: data.logo_url || null,
-          primary_color: data.primary_color || null,
-          welcome_message: data.welcome_message || null,
-          google_review_url: data.google_review_url || null,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq('id', existing.id)
         .select()
         .single()
 
       if (updateError || !updated) {
+        console.error('Update business error:', updateError)
         return NextResponse.json({ error: 'Failed to update restaurant profile' }, { status: 500 })
       }
       businessId = updated.id

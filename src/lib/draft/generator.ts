@@ -4,7 +4,7 @@ import { validateDraft } from './validators'
 
 export interface GenerationResult {
   text: string
-  method: 'llm' | 'fallback'
+  method: 'llm' | 'template' | 'fallback'
 }
 
 /**
@@ -176,5 +176,5 @@ ${JSON.stringify(factSheet, null, 2)}
 
   // Graceful deterministic template fallback
   const fallbackText = generateDeterministicDraft(factSheet, sessionId)
-  return { text: fallbackText, method: 'fallback' }
+  return { text: fallbackText, method: 'template' }
 }

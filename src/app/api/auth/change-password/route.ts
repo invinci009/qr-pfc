@@ -3,7 +3,7 @@ import { createServerClient } from '@supabase/ssr'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import type { Database } from '@/lib/supabase/types'
-import { resolveZaikaEmail } from '@/lib/auth-helpers'
+import { resolvePfcEmail } from '@/lib/auth-helpers'
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     // 1. Resolve alias or custom username if provided
     if (username && typeof username === 'string') {
-      targetEmail = resolveZaikaEmail(username)
+      targetEmail = resolvePfcEmail(username)
     }
 
     // 2. Check active authenticated session if no explicit username provided
@@ -114,6 +114,16 @@ export async function POST(request: NextRequest) {
         { error: updateError.message || 'Failed to update password.' },
         { status: 500 }
       )
+    }
+
+    // 5. Establish fresh authenticated session with new password so the caller stays logged in
+    try {
+      await verifyClient.auth.signInWithPassword({
+        email: targetEmail,
+        password: newPassword,
+      })
+    } catch (sessionErr) {
+      console.warn('Could not re-establish session automatically:', sessionErr)
     }
 
     return response

@@ -104,13 +104,13 @@ export default function PrivateFeedbackModal({
               <p className="text-xs text-stone-500">
                 This message goes directly to the restaurant leadership, not Google.
               </p>
-              <div className="flex items-center justify-between p-2 rounded-xl bg-amber-50 border border-amber-200/80 text-[11px] text-amber-900 mt-2">
+              <div className="flex items-center justify-between p-2 rounded-xl bg-rose-50 border border-rose-200/80 text-[11px] text-rose-900 mt-2">
                 <span className="flex items-center gap-1.5 font-medium">
-                  <Phone className="w-3.5 h-3.5 text-amber-700" />
+                  <Phone className="w-3.5 h-3.5 text-rose-700" />
                   Urgent? Call manager directly:
                 </span>
-                <a href="tel:7488260572" className="font-bold underline hover:text-amber-700">
-                  +91 7488260572
+                <a href="tel:7091719475" className="font-bold underline hover:text-rose-700">
+                  +91 70917 19475
                 </a>
               </div>
             </div>

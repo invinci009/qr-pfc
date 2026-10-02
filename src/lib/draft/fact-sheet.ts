@@ -26,7 +26,7 @@ export function ratingToTone(rating: number): AspectTone {
  * This is the ONLY data source allowed to feed draft generation.
  */
 export function buildFactSheet(
-  answers: Array<{ question_key: string; value: any }>,
+  answers: Array<{ question_key: string; value: unknown }>,
   menuItemNames: Record<string, string> = {},
   language: string = 'en'
 ): FactSheet {

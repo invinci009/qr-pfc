@@ -32,27 +32,43 @@ export default function ReviewDraftCard({
 
   // Fetch draft from API if not pre-populated
   useEffect(() => {
+    let ignore = false
+
     if (!draft && sessionId) {
-      setIsLoadingDraft(true)
-      fetch(`/api/public/sessions/${sessionId}/draft`, {
-        method: 'POST',
-        credentials: 'same-origin',
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data?.final_text || data?.original_text) {
-            setDraft(data.final_text || data.original_text)
-          } else {
-            setDraft(`Had a wonderful dining experience at ${restaurantName || 'PM Zaika Restaurant'} today! The food was flavorful and freshly prepared, and the service was warm and attentive. Highly recommended!`)
+      const fetchDraft = async () => {
+        setIsLoadingDraft(true)
+        try {
+          const res = await fetch(`/api/public/sessions/${sessionId}/draft`, {
+            method: 'POST',
+            credentials: 'same-origin',
+          })
+          const data = await res.json()
+          if (!ignore) {
+            if (data?.final_text || data?.original_text) {
+              setDraft(data.final_text || data.original_text)
+            } else {
+              setDraft(`Had an awesome experience at ${restaurantName || 'Patna Fried Chicken (PFC)'} today! The fried chicken was super crispy, hot, and seasoned to perfection. Burgers and wings were delicious, and service was really quick. Must visit for chicken lovers in Patna!`)
+            }
           }
-        })
-        .catch((err) => {
-          console.warn('Draft load error:', err)
-          setDraft(`Had a wonderful dining experience at ${restaurantName || 'PM Zaika Restaurant'} today! The food was flavorful and freshly prepared, and the service was warm and attentive. Highly recommended!`)
-        })
-        .finally(() => setIsLoadingDraft(false))
+        } catch (err) {
+          if (!ignore) {
+            console.warn('Draft load error:', err)
+            setDraft(`Had an awesome experience at ${restaurantName || 'Patna Fried Chicken (PFC)'} today! The fried chicken was super crispy, hot, and seasoned to perfection. Burgers and wings were delicious, and service was really quick. Must visit for chicken lovers in Patna!`)
+          }
+        } finally {
+          if (!ignore) {
+            setIsLoadingDraft(false)
+          }
+        }
+      }
+
+      fetchDraft()
     }
-  }, [sessionId, draft])
+
+    return () => {
+      ignore = true
+    }
+  }, [sessionId, draft, restaurantName])
 
   // Save changes with 1s debounce
   const handleDraftChange = (newText: string) => {

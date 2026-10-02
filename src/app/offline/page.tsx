@@ -79,20 +79,20 @@ export default function OfflinePage() {
           {/* Restaurant Quick Info Pill */}
           <div className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800 text-left space-y-2">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-rose-400">
                 <Sparkles className="w-3.5 h-3.5" />
-                PM Zaika Restaurant, Patna
+                PFC - Patna Fried Chicken
               </div>
               <a
-                href="tel:7488260572"
-                className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-[11px] font-bold text-amber-300 hover:bg-amber-500/25 transition-colors"
+                href="tel:7091719475"
+                className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-500/15 border border-rose-500/30 text-[11px] font-bold text-rose-300 hover:bg-rose-500/25 transition-colors"
               >
-                <Phone className="w-3 h-3 text-amber-400" />
-                <span>Call: 7488260572</span>
+                <Phone className="w-3 h-3 text-rose-400" />
+                <span>Call: 7091719475</span>
               </a>
             </div>
             <p className="text-[11px] text-slate-400 leading-tight">
-              Shershah Road, Gur ki Mandi, Infront of Bank of India, Gulzarbagh, Patna - 800007
+              Divya Appartment, Shop No. 4, Near Gold&apos;s Gym, Ashiyana Digha Road, Patna
             </p>
           </div>
 

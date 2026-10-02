@@ -8,12 +8,12 @@ interface ComplimentsQuestionProps {
 }
 
 const COMPLIMENT_OPTIONS = [
-  { key: 'food', label: 'Authentic Flavour', icon: Utensils, desc: 'Rich Dum spices & tender meat' },
-  { key: 'service', label: 'Warm Hospitality', icon: HeartHandshake, desc: 'Polite, attentive staff' },
-  { key: 'ambience', label: 'Pleasant Ambience', icon: Sparkles, desc: 'Clean, comfortable dining hall' },
-  { key: 'portion_size', label: 'Generous Portions', icon: Scale, desc: 'Filling & satisfying quantity' },
-  { key: 'presentation', label: 'Clay Handi Plating', icon: Eye, desc: 'Aromatic & beautifully served' },
-  { key: 'value', label: 'Great Value (₹200-400)', icon: BadgePercent, desc: 'Worth every rupee spent' },
+  { key: 'food', label: 'Crispy & Juicy Chicken', icon: Utensils, desc: 'Golden crunch outside, juicy & hot inside' },
+  { key: 'service', label: 'Fast & Polite Service', icon: HeartHandshake, desc: 'Quick order prep & courteous staff' },
+  { key: 'ambience', label: 'Clean & Vibrant Dine-In', icon: Sparkles, desc: 'Hygienic, comfortable restaurant atmosphere' },
+  { key: 'portion_size', label: 'Generous Bucket Portions', icon: Scale, desc: 'Filling buckets & loaded chicken combos' },
+  { key: 'presentation', label: 'Hot & Fresh Packaging', icon: Eye, desc: 'Served sizzling hot & extra crispy' },
+  { key: 'value', label: 'Pocket-Friendly Value', icon: BadgePercent, desc: 'Great combo pricing & meal deals' },
 ]
 
 export default function ComplimentsQuestion({ value, onChange }: ComplimentsQuestionProps) {

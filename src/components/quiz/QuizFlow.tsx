@@ -25,12 +25,22 @@ interface QuizFlowProps {
   googleReviewUrl?: string | null
   initialSessionId?: string | null
   initialStatus?: string | null
-  initialAnswers?: Record<string, any>
+  initialAnswers?: Record<string, unknown>
   initialDraftText?: string | null
   menuItems: MenuItemData[]
 }
 
 type QuestionKey = 'overall_rating' | 'food_rating' | 'service_rating' | 'liked' | 'ordered' | 'customer_contact'
+
+interface QuizAnswersState {
+  overall_rating: number | null
+  food_rating: number | null
+  service_rating: number | null
+  liked: string[]
+  ordered: string[]
+  customer_contact: ContactInfoValue
+  [key: string]: unknown
+}
 
 export default function QuizFlow({
   slug,
@@ -54,13 +64,13 @@ export default function QuizFlow({
 
   const [isPrivateFeedbackOpen, setIsPrivateFeedbackOpen] = useState(false)
   const [hasSyncError, setHasSyncError] = useState(false)
-  const [pendingSync, setPendingSync] = useState<{ key: string; value: any } | null>(null)
+  const [pendingSync, setPendingSync] = useState<{ key: string; value: unknown } | null>(null)
   const [phoneCopied, setPhoneCopied] = useState(false)
 
   const handleCopyPhone = (e: React.MouseEvent) => {
     e.stopPropagation()
     if (navigator.clipboard) {
-      navigator.clipboard.writeText('7488260572')
+      navigator.clipboard.writeText('7091719475')
       setPhoneCopied(true)
       setTimeout(() => setPhoneCopied(false), 2500)
     }
@@ -88,16 +98,17 @@ export default function QuizFlow({
   }
 
   const [stepIndex, setStepIndex] = useState(getInitialStepIndex())
-  const [answers, setAnswers] = useState<Record<string, any>>({
-    overall_rating: initialAnswers.overall_rating ?? null,
-    food_rating: initialAnswers.food_rating ?? null,
-    service_rating: initialAnswers.service_rating ?? null,
-    liked: initialAnswers.liked ?? [],
-    ordered: initialAnswers.ordered ?? [],
-    customer_contact: initialAnswers.customer_contact ?? {
-      name: initialAnswers.customer_name ?? '',
-      phone: initialAnswers.customer_phone ?? '',
-      optIn: true,
+  const initialContact = (initialAnswers.customer_contact as Partial<ContactInfoValue>) || {}
+  const [answers, setAnswers] = useState<QuizAnswersState>({
+    overall_rating: typeof initialAnswers.overall_rating === 'number' ? initialAnswers.overall_rating : null,
+    food_rating: typeof initialAnswers.food_rating === 'number' ? initialAnswers.food_rating : null,
+    service_rating: typeof initialAnswers.service_rating === 'number' ? initialAnswers.service_rating : null,
+    liked: Array.isArray(initialAnswers.liked) ? (initialAnswers.liked as string[]) : [],
+    ordered: Array.isArray(initialAnswers.ordered) ? (initialAnswers.ordered as string[]) : [],
+    customer_contact: (initialAnswers.customer_contact as ContactInfoValue) || {
+      name: initialContact.name ?? (initialAnswers.customer_name as string) ?? '',
+      phone: initialContact.phone ?? (initialAnswers.customer_phone as string) ?? '',
+      optIn: initialContact.optIn ?? true,
     },
   })
 
@@ -105,7 +116,7 @@ export default function QuizFlow({
   const [isStarting, setIsStarting] = useState(false)
 
   // Save an individual answer via API
-  const persistAnswer = async (sId: string, key: string, value: any) => {
+  const persistAnswer = async (sId: string, key: string, value: unknown) => {
     try {
       const res = await fetch(`/api/public/sessions/${sId}/answers/${key}`, {
         method: 'PUT',
@@ -170,15 +181,16 @@ export default function QuizFlow({
   }
 
   // Set an answer for a question with auto-save
-  const handleSetAnswer = (key: QuestionKey, value: any, autoAdvance = false) => {
-    setAnswers((prev) => ({ ...prev, [key]: value }))
+  const handleSetAnswer = (key: QuestionKey, value: unknown, autoAdvance = false) => {
+    setAnswers((prev) => ({ ...prev, [key]: value } as QuizAnswersState))
 
     if (sessionId) {
       persistAnswer(sessionId, key, value)
       // When saving customer_contact, also denormalize phone and name for direct queries
       if (key === 'customer_contact' && typeof value === 'object' && value !== null) {
-        if (value.phone) persistAnswer(sessionId, 'customer_phone', value.phone)
-        if (value.name) persistAnswer(sessionId, 'customer_name', value.name)
+        const contact = value as { phone?: string; name?: string }
+        if (contact.phone) persistAnswer(sessionId, 'customer_phone', contact.phone)
+        if (contact.name) persistAnswer(sessionId, 'customer_name', contact.name)
       }
     }
 
@@ -274,62 +286,62 @@ export default function QuizFlow({
         <main className="relative z-10 w-full max-w-md mx-auto my-auto py-2 sm:py-6">
           <div className="p-5 sm:p-8 rounded-2xl sm:rounded-3xl bg-white border border-stone-200 shadow-[0_20px_60px_-15px_rgba(180,83,9,0.08),0_4px_20px_rgba(0,0,0,0.03)] space-y-5 sm:space-y-6 text-center animate-in fade-in zoom-in-95 duration-300">
             {/* Crest / Monogram Icon */}
-            <div className="relative mx-auto w-20 h-20">
-              <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-500 text-white flex items-center justify-center shadow-xl shadow-amber-600/25 overflow-hidden border-2 border-amber-200">
-                {logoUrl ? (
+            <div className="relative mx-auto w-24 h-24">
+              <div className="w-24 h-24 mx-auto rounded-3xl bg-gradient-to-tr from-rose-600 via-rose-500 to-amber-500 text-white flex items-center justify-center shadow-xl shadow-rose-600/25 overflow-hidden border-2 border-rose-200">
+                {logoUrl || '/pfc-logo.jpg' ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={logoUrl} alt={restaurantName} className="w-full h-full object-cover" />
+                  <img src={logoUrl || '/pfc-logo.jpg'} alt={restaurantName} className="w-full h-full object-cover" />
                 ) : (
-                  <Utensils className="w-9 h-9" />
+                  <Utensils className="w-10 h-10" />
                 )}
               </div>
-              <div className="absolute -bottom-1 -right-1 p-1 rounded-full bg-white shadow-xs border border-stone-200 text-amber-600">
-                <Sparkles className="w-4 h-4 fill-amber-400" />
+              <div className="absolute -bottom-1 -right-1 p-1 rounded-full bg-white shadow-xs border border-stone-200 text-rose-600">
+                <Sparkles className="w-4 h-4 fill-amber-400 text-amber-500" />
               </div>
             </div>
 
             {/* Restaurant Name & Subtitle */}
             <div className="space-y-1.5">
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-stone-900">
-                {restaurantName || 'PM Zaika Restaurant'}
+                {restaurantName || 'Patna Fried Chicken (PFC)'}
               </h1>
-              <p className="text-sm font-semibold text-amber-800">
-                पीएम ज़ायका रेस्टोरेंट • Authentic Mughlai, Biryani & Chinese
+              <p className="text-sm font-semibold text-rose-800">
+                पटना फ्राइड चिकन • Crispy Fried Chicken, Burgers, Wings &amp; Sides
               </p>
               <div className="pt-1 flex items-center justify-center gap-2 text-xs text-stone-500">
-                <span className="flex items-center gap-1 font-semibold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200/60">
-                  <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" /> 4.5 • Zaika Special Dining
+                <span className="flex items-center gap-1 font-semibold text-rose-800 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200/70">
+                  <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" /> 4.8 • Crispy Fast Food Specialist
                 </span>
                 <span>•</span>
-                <span>Gulzarbagh, Patna</span>
+                <span>Ashiyana Digha Road, Patna</span>
               </div>
             </div>
 
             {/* Prominent Customer Contact Box (Main Phone Display for Customers) */}
-            <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-amber-50 via-amber-100/60 to-yellow-50 border border-amber-300 shadow-sm space-y-2 text-left">
+            <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-rose-50 via-amber-50 to-orange-50 border border-rose-200 shadow-sm space-y-2 text-left">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-extrabold tracking-wider text-amber-950 uppercase flex items-center gap-1.5">
-                  <Phone className="w-3.5 h-3.5 text-amber-700 animate-pulse" />
-                  Restaurant Contact & Orders
+                <span className="text-[10px] font-extrabold tracking-wider text-rose-950 uppercase flex items-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-rose-700 animate-pulse" />
+                  Order &amp; Customer Helpline
                 </span>
                 <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded-full border border-emerald-300/70">
-                  Main Helpline
+                  Direct Line
                 </span>
               </div>
-              <div className="flex items-center justify-between gap-2 bg-white/95 p-2 sm:p-2.5 rounded-xl border border-amber-200 shadow-xs">
+              <div className="flex items-center justify-between gap-2 bg-white/95 p-2 sm:p-2.5 rounded-xl border border-rose-200/80 shadow-xs">
                 <a
-                  href="tel:7488260572"
-                  className="flex items-center gap-2.5 text-stone-900 hover:text-amber-800 transition-colors flex-1"
+                  href="tel:7091719475"
+                  className="flex items-center gap-2.5 text-stone-900 hover:text-rose-800 transition-colors flex-1"
                 >
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-amber-600/30">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-rose-600/30">
                     <Phone className="w-4 h-4" />
                   </div>
                   <div>
                     <span className="text-base sm:text-lg font-black tracking-wide text-stone-900 block leading-tight">
-                      +91 74882 60572
+                      +91 70917 19475
                     </span>
-                    <span className="text-[10px] text-amber-700 font-semibold block">
-                      Tap to call restaurant directly
+                    <span className="text-[10px] text-rose-700 font-semibold block">
+                      Tap to call for orders &amp; takeaway
                     </span>
                   </div>
                 </a>
@@ -352,25 +364,21 @@ export default function QuizFlow({
                   )}
                 </button>
               </div>
-              {/* Other Contact Numbers */}
+              {/* Landmark & Quick Info */}
               <div className="flex items-center justify-between text-[10px] text-stone-600 px-1 pt-0.5">
-                <span className="text-stone-500">Other Lines:</span>
-                <div className="flex items-center gap-2">
-                  <a href="tel:06123112128" className="hover:text-amber-800 font-semibold hover:underline">0612-3112128</a>
-                  <span>•</span>
-                  <a href="tel:9525748843" className="hover:text-amber-800 font-semibold hover:underline">9525748843</a>
-                </div>
+                <span className="text-stone-500">Location:</span>
+                <span className="font-semibold text-rose-900">Near Gold&apos;s Gym • Divya Appartment Shop No 4</span>
               </div>
             </div>
 
             {/* Address Pill */}
             <div className="p-3 rounded-2xl bg-stone-50/90 border border-stone-200/90 text-left space-y-0.5">
               <div className="flex items-center gap-1.5 text-xs font-bold text-stone-900">
-                <MapPin className="w-3.5 h-3.5 text-amber-700 shrink-0" />
-                <span>Shershah Road, Gur ki Mandi, Patna</span>
+                <MapPin className="w-3.5 h-3.5 text-rose-700 shrink-0" />
+                <span>Ashiyana Digha Road, Patna</span>
               </div>
               <p className="text-[11px] text-stone-600 pl-5 leading-relaxed">
-                Infront of Bank of India, PO - Gulzarbagh, Patna - 800007
+                Divya Appartment, Shop No. 4, Near Gold&apos;s Gym, Patna
               </p>
             </div>
 

@@ -14,20 +14,30 @@ const patchDraftSchema = z.object({
   final_text: z.string().min(1).max(2000),
 })
 
+interface RouteProps {
+  params: Promise<{ id: string }>
+}
+
 export async function POST(request: NextRequest, { params }: RouteProps) {
   const startTime = Date.now()
   try {
-    const { id } = await params
+    const resolvedParams = await params
+    let id = resolvedParams?.id
+    if (!id || id === 'undefined') {
+      const match = request.url.match(/\/sessions\/([^\/\?]+)/)
+      if (match) id = match[1]
+    }
+
     const supabase = createAdminClient()
 
     // 1. Fetch session and business info
-    const { data: session } = await supabase
+    const { data: session, error: sessionErr } = await supabase
       .from('sessions')
       .select('id, business_id, status, businesses(name)')
       .eq('id', id)
       .maybeSingle()
 
-    if (!session) {
+    if (sessionErr || !session) {
       return NextResponse.json({ error: 'Session not found' }, { status: 404 })
     }
 
@@ -68,7 +78,7 @@ export async function POST(request: NextRequest, { params }: RouteProps) {
     }
 
     const factSheet = buildFactSheet(answers || [], menuItemNames)
-    const restaurantName = (session.businesses as any)?.name || 'PM Zaika Restaurant'
+    const restaurantName = (session.businesses as any)?.name || 'Patna Fried Chicken (PFC)'
 
     // 5. Generate review draft
     const generated = await generateReviewDraft(factSheet, id, restaurantName)

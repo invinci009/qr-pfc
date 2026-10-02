@@ -6,7 +6,7 @@ export const ratingSchema = z.number().int().min(1).max(5)
 // === Campaign Slug ===
 export const slugSchema = z
   .string()
-  .min(6)
+  .min(3)
   .max(40)
   .regex(/^[a-z0-9-]+$/, 'Slug must contain only lowercase letters, numbers, and hyphens')
 
@@ -22,13 +22,17 @@ const ALLOWED_GOOGLE_HOSTS = [
 
 export const googleReviewUrlSchema = z
   .string()
-  .url()
+  .trim()
+  .optional()
+  .nullable()
+  .transform((val) => (val === '' ? null : val))
   .refine(
     (url) => {
+      if (!url) return true
       try {
         const { hostname, protocol } = new URL(url)
         return (
-          protocol === 'https:' &&
+          (protocol === 'https:' || protocol === 'http:') &&
           ALLOWED_GOOGLE_HOSTS.some(
             (allowed) => hostname === allowed || hostname.endsWith('.' + allowed)
           )
@@ -90,7 +94,7 @@ export const businessCreateSchema = z.object({
   phone: z.string().max(50).optional().nullable(),
   secondary_phone: z.string().max(100).optional().nullable(),
   timezone: z.string().default('Asia/Kolkata'),
-  logo_url: z.string().url().optional().nullable(),
+  logo_url: z.string().max(500).optional().nullable(),
   primary_color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional().nullable(),
   welcome_message: z.record(z.string(), z.string()).optional(),
   google_review_url: googleReviewUrlSchema.optional().nullable(),

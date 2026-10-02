@@ -23,7 +23,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   // 1. Fetch restaurant owned by user, or fall back to primary business
   let businessQuery = admin
     .from('businesses')
-    .select('id, name, location, phone, secondary_phone, primary_color, welcome_message, google_review_url')
+    .select('id, name, location, phone, secondary_phone, logo_url, primary_color, welcome_message, google_review_url')
 
   if (user) {
     businessQuery = businessQuery.eq('owner_id', user.id)
@@ -35,7 +35,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   if (!business) {
     const { data: defaultBusiness } = await admin
       .from('businesses')
-      .select('id, name, location, phone, secondary_phone, primary_color, welcome_message, google_review_url')
+      .select('id, name, location, phone, secondary_phone, logo_url, primary_color, welcome_message, google_review_url')
       .order('created_at', { ascending: true })
       .limit(1)
       .maybeSingle()
@@ -359,11 +359,12 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         id: business.id,
         name: business.name,
         location: business.location,
-        phone: (business as any).phone || '7488260572',
-        secondaryPhone: (business as any).secondary_phone || '06123112128, 9525748843',
+        phone: (business as any).phone || '7091719475',
+        secondaryPhone: (business as any).secondary_phone || '',
         googleReviewUrl: business.google_review_url,
         welcomeMessage: business.welcome_message,
         primaryColor: business.primary_color,
+        logoUrl: (business as any).logo_url || '/pfc-logo.jpg',
       }}
       campaigns={campaigns || []}
       analytics={analytics}

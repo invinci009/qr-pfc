@@ -12,6 +12,45 @@ const patchDishSchema = z.object({
   active: z.boolean(),
 })
 
+export async function GET(request: NextRequest) {
+  try {
+    const admin = createAdminClient()
+    const { searchParams } = new URL(request.url)
+    let businessId = searchParams.get('business_id')
+
+    if (!businessId) {
+      const { data: defaultBiz } = await admin
+        .from('businesses')
+        .select('id')
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .maybeSingle()
+      if (defaultBiz) {
+        businessId = defaultBiz.id
+      }
+    }
+
+    if (!businessId) {
+      return NextResponse.json({ error: 'Business not found' }, { status: 404 })
+    }
+
+    const { data: menuItems, error } = await admin
+      .from('menu_items')
+      .select('id, business_id, name, active, position')
+      .eq('business_id', businessId)
+      .order('position', { ascending: true })
+
+    if (error) {
+      return NextResponse.json({ error: 'Failed to fetch menu items' }, { status: 500 })
+    }
+
+    return NextResponse.json({ menu_items: menuItems }, { status: 200 })
+  } catch (error) {
+    console.error('Fetch menu items error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()

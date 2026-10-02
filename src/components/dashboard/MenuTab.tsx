@@ -65,14 +65,21 @@ export default function MenuTab({ menuItems, onRefresh }: MenuTabProps) {
   }
 
   const handleDeleteDish = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this menu dish?')) return
+    if (typeof window !== 'undefined' && !window.confirm('Are you sure you want to delete this menu dish?')) return
+    setError(null)
     try {
       const res = await fetch(`/api/business/menu?id=${id}`, {
         method: 'DELETE',
       })
-      if (res.ok) onRefresh()
+      if (res.ok) {
+        onRefresh()
+      } else {
+        const data = await res.json()
+        setError(data.error || 'Failed to delete dish')
+      }
     } catch (e) {
       console.error('Delete dish error:', e)
+      setError('Connection error while deleting dish')
     }
   }
 
@@ -98,13 +105,13 @@ export default function MenuTab({ menuItems, onRefresh }: MenuTabProps) {
         <CardHeader className="pb-3">
           <CardTitle className="text-sm text-white">Add Specialty Dish</CardTitle>
           <CardDescription className="text-xs text-slate-400">
-            Popular starters, mains, signature cocktails, or desserts
+            Popular chicken buckets, burgers, popcorn, wings, or beverages
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAddDish} className="flex gap-3">
             <Input
-              placeholder="e.g. Butter Chicken, Paneer Tikka, Tiramisu..."
+              placeholder="e.g. Crispy Fried Chicken, Zinger Burger, Hot Wings..."
               value={dishName}
               onChange={(e) => setDishName(e.target.value)}
               className="bg-slate-950/60 border-slate-800 text-white h-10 text-xs flex-1"

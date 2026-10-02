@@ -4,7 +4,7 @@ import { UtensilsCrossed, Check, Plus, Sparkles } from 'lucide-react'
 
 export interface MenuItemData {
   id: string
-  name: any
+  name: unknown
 }
 
 interface OrderedItemsQuestionProps {
@@ -29,7 +29,8 @@ export default function OrderedItemsQuestion({
   const getItemName = (item: MenuItemData): string => {
     if (typeof item.name === 'string') return item.name
     if (typeof item.name === 'object' && item.name !== null) {
-      return item.name.en || Object.values(item.name)[0] || 'Menu item'
+      const obj = item.name as Record<string, unknown>
+      return (obj.en as string) || (Object.values(obj)[0] as string) || 'Menu item'
     }
     return 'Menu item'
   }
@@ -53,7 +54,7 @@ export default function OrderedItemsQuestion({
           ?
         </h2>
         <p className="text-sm text-stone-600">
-          Select dishes, biryani, or breads you enjoyed today
+          Select the crispy chicken, burgers, sides, or drinks you enjoyed today
         </p>
       </div>
 

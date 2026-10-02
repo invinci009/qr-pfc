@@ -460,7 +460,7 @@ export default function ChangePasswordModal({
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
-                  placeholder="admin or owner@pmzaika.com"
+                  placeholder="admin, pfc or owner@pfcpatna.com"
                   disabled={loading}
                   className="bg-slate-950/70 border-slate-800 text-white placeholder:text-slate-500 h-10 rounded-xl text-xs"
                 />

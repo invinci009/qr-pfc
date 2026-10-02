@@ -27,12 +27,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link href="/dashboard" className="flex items-center gap-2.5 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-500 flex items-center justify-center text-white font-extrabold shadow-md shadow-amber-600/20 group-hover:scale-105 transition-transform border border-amber-400/30 text-xs tracking-wider">
-                PMZ
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-600 via-rose-500 to-amber-500 flex items-center justify-center text-white font-extrabold shadow-md shadow-rose-600/20 group-hover:scale-105 transition-transform border border-rose-400/30 overflow-hidden text-xs tracking-wider">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/pfc-logo.jpg" alt="PFC" className="w-full h-full object-cover" />
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-base text-white tracking-tight leading-tight">PM Zaika Restaurant</span>
-                <span className="text-[10px] text-amber-400 font-semibold leading-none">ReviewPulse Portal • Patna</span>
+                <span className="font-bold text-base text-white tracking-tight leading-tight">Patna Fried Chicken (PFC)</span>
+                <span className="text-[10px] text-rose-400 font-semibold leading-none">ReviewPulse Portal • Ashiyana Digha Rd, Patna</span>
               </div>
             </Link>
 
@@ -41,7 +42,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 href="/dashboard?tab=overview"
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-medium transition-colors"
               >
-                <LayoutDashboard className="w-4 h-4 text-amber-400" />
+                <LayoutDashboard className="w-4 h-4 text-rose-400" />
                 Overview
               </Link>
               <Link
@@ -87,8 +88,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <span className="text-xs font-semibold text-slate-200 truncate max-w-[200px]">
                 {user.email}
               </span>
-              <span className="text-[11px] text-amber-400 font-medium flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-amber-400" /> PM Zaika Owner
+              <span className="text-[11px] text-rose-400 font-medium flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-rose-400" /> PFC Owner / Admin
               </span>
             </div>
 

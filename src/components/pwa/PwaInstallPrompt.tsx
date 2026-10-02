@@ -64,7 +64,7 @@ export default function PwaInstallPrompt() {
               Install ReviewPulse
             </h2>
             <p className="text-xs text-slate-400">
-              PM Zaika Restaurant Feedback &amp; Portal
+              PFC - Patna Fried Chicken Feedback &amp; Portal
             </p>
           </div>
         </div>

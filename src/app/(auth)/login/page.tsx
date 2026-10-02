@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { Eye, EyeOff, Loader2, LogIn, AlertCircle, CheckCircle2, Utensils, KeyRound, UserCheck, ShieldCheck } from 'lucide-react'
+import { Eye, EyeOff, Loader2, LogIn, AlertCircle, CheckCircle2, KeyRound, UserCheck, ShieldCheck } from 'lucide-react'
 import ChangePasswordModal from '@/components/auth/ChangePasswordModal'
 
 export default function LoginPage() {
@@ -54,11 +54,12 @@ export default function LoginPage() {
       <Card className="border border-slate-800 bg-slate-900/85 backdrop-blur-xl shadow-2xl text-slate-100 rounded-3xl overflow-hidden">
         <CardHeader className="space-y-1.5 pb-3">
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-500 text-white flex items-center justify-center font-bold text-xs shadow-md shadow-amber-500/20">
-              <Utensils className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 text-white flex items-center justify-center font-bold text-xs shadow-md shadow-rose-500/20 overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/pfc-logo.jpg" alt="PFC" className="w-full h-full object-cover" />
             </div>
-            <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-              PM Zaika Restaurant Admin
+            <span className="text-xs font-bold text-rose-400 uppercase tracking-wider">
+              Patna Fried Chicken (PFC) Admin
             </span>
           </div>
           <CardTitle className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
@@ -93,13 +94,13 @@ export default function LoginPage() {
               <Input
                 id="username"
                 type="text"
-                placeholder="admin or owner@pmzaika.com"
+                placeholder="admin, pfc or owner@pfcpatna.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
                 autoComplete="username"
-                className="bg-slate-950/70 border-slate-800 focus:border-amber-500 text-white placeholder:text-slate-500 h-11 rounded-xl text-sm"
+                className="bg-slate-950/70 border-slate-800 focus:border-rose-500 text-white placeholder:text-slate-500 h-11 rounded-xl text-sm"
               />
             </div>
 
@@ -178,8 +179,8 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 pt-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-amber-500/70" />
-              <span>PM Zaika Restaurant Admin Portal • Owner Access</span>
+              <ShieldCheck className="w-3.5 h-3.5 text-rose-500/70" />
+              <span>Patna Fried Chicken (PFC) Admin Portal • Ashiyana Digha Rd</span>
             </div>
           </CardFooter>
         </form>
