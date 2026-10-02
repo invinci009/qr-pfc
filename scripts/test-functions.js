@@ -148,7 +148,7 @@ async function run() {
       phone: '7091719475',
       secondary_phone: '9876543210',
       logo_url: '/pfc-logo.jpg',
-      google_review_url: 'https://maps.google.com/?q=PFC+Patna+Fried+Chicken+Ashiyana+Digha+Road+Patna',
+      google_review_url: 'https://search.google.com/local/writereview?placeid=ChIJHxZmNS1X7TkR77HVa1ipTJw',
       primary_color: '#e11d48',
       welcome_message: {
         en: 'Welcome to Patna Fried Chicken (PFC)! Share your crispy dining experience with us in 30 seconds. For helpline & orders call 7091719475.',

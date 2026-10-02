@@ -324,7 +324,7 @@ BEGIN
       '/pfc-logo.jpg',
       '#e11d48',
       '{"en": "Welcome to Patna Fried Chicken (PFC)! Share your crispy dining experience with us in 30 seconds. For helpline & orders call 7091719475."}'::jsonb,
-      'https://maps.google.com/?q=PFC+Patna+Fried+Chicken+Ashiyana+Digha+Road+Patna'
+      'https://search.google.com/local/writereview?placeid=ChIJHxZmNS1X7TkR77HVa1ipTJw'
     )
     RETURNING id INTO v_business_id;
   ELSE
@@ -337,7 +337,7 @@ BEGIN
       logo_url = '/pfc-logo.jpg',
       primary_color = '#e11d48',
       welcome_message = '{"en": "Welcome to Patna Fried Chicken (PFC)! Share your crispy dining experience with us in 30 seconds. For helpline & orders call 7091719475."}'::jsonb,
-      google_review_url = 'https://maps.google.com/?q=PFC+Patna+Fried+Chicken+Ashiyana+Digha+Road+Patna',
+      google_review_url = 'https://search.google.com/local/writereview?placeid=ChIJHxZmNS1X7TkR77HVa1ipTJw',
       updated_at = now()
     WHERE id = v_business_id;
   END IF;

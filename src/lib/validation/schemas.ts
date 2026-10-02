@@ -25,7 +25,14 @@ export const googleReviewUrlSchema = z
   .trim()
   .optional()
   .nullable()
-  .transform((val) => (val === '' ? null : val))
+  .transform((val) => {
+    if (!val || val === '') return null
+    // Auto-convert Google Place ID to direct write-review URL
+    if (val.startsWith('ChIJ')) {
+      return `https://search.google.com/local/writereview?placeid=${val}`
+    }
+    return val
+  })
   .refine(
     (url) => {
       if (!url) return true
@@ -41,7 +48,7 @@ export const googleReviewUrlSchema = z
         return false
       }
     },
-    { message: 'Must be a valid Google review URL (https)' }
+    { message: 'Must be a valid Google review URL or Place ID (e.g. ChIJ...)' }
   )
 
 // === Quiz Answer Schemas ===
