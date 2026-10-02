@@ -31,7 +31,10 @@ export async function POST(request: NextRequest) {
       }
     )
 
-    const origin = request.nextUrl.origin || 'http://localhost:3000'
+    const origin =
+      process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') ||
+      request.nextUrl.origin ||
+      'https://qr-pfc.vercel.app'
     const { error } = await supabase.auth.resetPasswordForEmail(resolvedEmail, {
       redirectTo: `${origin}/auth/callback?next=/dashboard?tab=settings`,
     })

@@ -8,6 +8,7 @@ import OfflineIndicator from '@/components/pwa/OfflineIndicator'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://qr-pfc.vercel.app'),
   title: {
     default: 'PFC - Patna Fried Chicken | Feedback & Reviews',
     template: '%s | PFC Patna Fried Chicken',
@@ -55,7 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="ReviewPulse" />
+        <meta name="apple-mobile-web-app-title" content="PFC Patna" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         {/* Development: Force-unregister lingering service workers & clear stale dev caches */}
         <script

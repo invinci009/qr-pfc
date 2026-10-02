@@ -1,5 +1,6 @@
 const fs = require('fs');
 const http = require('http');
+const https = require('https');
 const { createClient } = require('@supabase/supabase-js');
 
 const env = fs.readFileSync('.env.local', 'utf8');
@@ -7,15 +8,17 @@ const urlMatch = env.match(/NEXT_PUBLIC_SUPABASE_URL=(.+)/);
 const keyMatch = env.match(/SUPABASE_SERVICE_ROLE_KEY=(.+)/);
 const supabase = createClient(urlMatch[1].trim(), keyMatch[1].trim());
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = process.env.TEST_BASE_URL || 'http://localhost:3000';
 
 function request(method, path, body = null, headers = {}) {
   return new Promise((resolve, reject) => {
     const url = new URL(path, BASE_URL);
+    const isHttps = url.protocol === 'https:';
+    const client = isHttps ? https : http;
     const options = {
       method,
       hostname: url.hostname,
-      port: url.port,
+      port: url.port || (isHttps ? 443 : 80),
       path: url.pathname + url.search,
       headers: {
         'Content-Type': 'application/json',
@@ -23,7 +26,7 @@ function request(method, path, body = null, headers = {}) {
       },
     };
 
-    const req = http.request(options, (res) => {
+    const req = client.request(options, (res) => {
       let data = '';
       res.on('data', (chunk) => (data += chunk));
       res.on('end', () => {
@@ -58,7 +61,13 @@ function parseCookie(setCookieHeaders) {
 
 async function run() {
   console.log('--- 1. Set Initial Password via Admin ---');
-  const userId = 'e911b280-fa1c-44f4-a173-ff0da10e74bc';
+  const { data: { users } } = await supabase.auth.admin.listUsers();
+  const adminUser = users?.find((u) => u.email === 'invincibleperson9@gmail.com') || users?.[0];
+  if (!adminUser) {
+    console.error('No admin user found in database');
+    process.exit(1);
+  }
+  const userId = adminUser.id;
   const initialPassword = 'PfcAdmin@2026!';
   const { error: setPassErr } = await supabase.auth.admin.updateUserById(userId, {
     password: initialPassword,
